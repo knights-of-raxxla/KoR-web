@@ -1,5 +1,6 @@
 import SessionStore from './SessionStore.js';
 import AuthApi from '../API/AuthApi.js';
+import EventBusFactory from '../Framework/EventBusFactory.js';
 
 
 const $cookie_key = 'raxxla_auth';
@@ -13,6 +14,16 @@ export default class Gatekeeper {
     constructor() {
         this.session = SessionStore.getInstance();
         this.authApi = new AuthApi();
+        this.eventBus = EventBusFactory.getInstance()
+            .get('session');
+        this._onSignOut();
+    }
+
+    _onSignOut() {
+        this.eventBus.once('sign out', () => {
+            document.cookie="raxxla_auth=false;expires=" + new Date(0).toGMTString()
+            window.location.reload();
+        });
     }
 
     isOnPublicRoute() {

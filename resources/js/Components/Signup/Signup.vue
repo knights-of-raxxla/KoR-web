@@ -23,9 +23,9 @@
                             <label>Main platform</label>
                             <select v-model="form.platform" class="form-control">
                                 <option disabled value="">Choose</option>
-                                <option>PC</option>
-                                <option>PS4</option>
-                                <option>Xbox One</option>
+                                <option value="pc">PC</option>
+                                <option value="ps4">PS4</option>
+                                <option value="xbox_one">Xbox One</option>
                             </select>
 
                             <div v-if="name_valid && !valid_platform"
@@ -64,6 +64,14 @@
                             />
                           <div class="text-danger" v-if="!passwords_match">Passwords do not match.</div>
 
+                          <label>
+                            <input
+                            type="checkbox"
+                            v-model="form.conditions"
+                            />
+                            I hereby accept the <a href="/tos"> terms of service</a>
+                          </label>
+
                         </div>
 
                         <div class="col-xs-12">
@@ -92,6 +100,7 @@ export default {
                 password_verif: null,
                 name: null,
                 platform: '',
+                conditions: false
             },
             states: {
                 ready: false,
@@ -104,7 +113,13 @@ export default {
     },
     methods: {
         submit() {
-            console.log('dadapewpew');
+            authApi.createUser(this.form)
+                .then(data => {
+                    console.log(data);
+                    window.location.href = '/signin';
+                }).catch(err => {
+                    console.log({err});
+                });
         }
     },
     computed: {
@@ -128,8 +143,14 @@ export default {
 
         },
         all_fields_filled() {
+            let keys = [
+                'email',
+                'password',
+                'password_verif',
+                'name',
+                'platform'
+            ];
             let valid = true;
-            let keys = Object.keys(this.form);
             for (let key of keys) {
                 let val = this.form[key];
                 if (!val || !val.length) {
@@ -153,7 +174,8 @@ export default {
             this.passwords_match === true &&
             this.password_safe === true &&
             this.name_valid === true &&
-            this.valid_platform;
+            this.valid_platform === true &&
+            this.form.conditions === true;
         }
     }
 }

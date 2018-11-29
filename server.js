@@ -24,9 +24,18 @@ app.get('/login', function (req, res) {
 
 app.get('/signup', function(req, res) {
     res.render('pages/signup.twig');
-})
+});
+
+app.get('/tos', function(req, res) {
+    res.render('pages/tos.twig');
+});
+
+app.get('/signin', function(req, res) {
+    res.render('pages/login.twig');
+});
+
 
 app.listen(port, function () {
-    console.log('Example app listening on port ' + port);
+    console.log('Raxxla Research Program WEB UI is listening on port ' + port);
 })
 

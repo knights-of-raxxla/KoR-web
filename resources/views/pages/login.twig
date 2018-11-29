@@ -1,5 +1,6 @@
-
-<div class="container vue-app">
-    <login></login>
-</div>
-{% include '../parts/footer.twig' %}
+{% extends '../templates/base.twig' %}
+{% block body %}
+    <div style="margin-top: 30px">
+        <login></login>
+    </div>
+{% endblock %}

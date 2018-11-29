@@ -7,8 +7,13 @@ export default class AuthApi extends API {
                 this.getApiUrl(),
                 'api/v1/user/authenticate'
                 ].join('');
-                return this.$.ajax({url})
-                .then(data => {
+                return this.$.ajax({
+                    type: 'POST',
+                    url,
+                    headers: {
+                        'raxxla-auth': this.getCookie(),
+                    }
+                }).then(data => {
                     console.log({data});
                     return resolve(data);
                 }).fail(err => {
@@ -20,7 +25,7 @@ export default class AuthApi extends API {
     login(email, password) {
         let url = [
             this.getApiUrl(),
-            '/api/v1/user/login',
+            'api/v1/user/login',
             '?',
             encodeURIComponent('email=' + email),
             '&',
@@ -31,6 +36,25 @@ export default class AuthApi extends API {
                 url
             }).then(data => {
                 return resolve(data);
+            }).fail(err => {
+                return reject(err);
+            });
+        });
+    }
+
+    createUser(data) {
+        let url = [
+            this.getApiUrl(),
+            'api/v1/user/create'
+        ].join('');
+        return new Promise((resolve, reject) => {
+            this.$.ajax({
+                type: 'POST',
+                url,
+                data
+            }).then(res => {
+                console.log({res});
+                return resolve(res);
             }).fail(err => {
                 return reject(err);
             });
