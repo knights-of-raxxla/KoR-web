@@ -1,0 +1,19 @@
+version: '2'
+networks:
+  local:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.116.0.0/24
+services:
+    main:
+        build: ./main
+        tty: true
+
+        volumes:
+            - ~/Documents/projects/perso/KoR-web/:/var/www/KoR-web/
+        networks:
+            local:
+                ipv4_address: 172.116.0.102
+        ports:
+            - "4000:4000"
