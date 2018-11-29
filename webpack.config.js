@@ -35,6 +35,9 @@ if (env === 'production') {
 module.exports = {
     mode: process.env.WEBPACK_ENV,
     watch: process.env.WEBPACK_ENV === 'development',
+    watchOptions: {
+        poll: true
+    },
     entry: entryPoint,
     output: {
         path: exportPath,

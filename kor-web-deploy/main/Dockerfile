@@ -14,6 +14,8 @@ RUN curl -sL https://deb.nodesource.com/setup_9.x | bash -
 RUN apt-get update && \
     apt-get install -y nodejs
 
+RUN npm install -g webpack-cli pm2
+
 
 CMD touch /var/log/001.txt && tail -f /var/log/001.txt
 

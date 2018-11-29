@@ -18,6 +18,14 @@ app.get('/', function(req, res){
     });
 });
 
+app.get('/login', function (req, res) {
+    res.render('pages/login.twig');
+});
+
+app.get('/signup', function(req, res) {
+    res.render('pages/signup.twig');
+})
+
 app.listen(port, function () {
     console.log('Example app listening on port ' + port);
 })
