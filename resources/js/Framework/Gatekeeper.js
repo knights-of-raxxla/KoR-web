@@ -6,8 +6,10 @@ import EventBusFactory from '../Framework/EventBusFactory.js';
 const $cookie_key = 'raxxla_auth';
 const $login_route = '/login';
 const $public_routes = [
-    '/login',
-    '/reset-password'
+    '/signin',
+    '/signup',
+    '/password/start-reset',
+    '/password/reset/'
 ];
 
 export default class Gatekeeper {
@@ -28,7 +30,14 @@ export default class Gatekeeper {
 
     isOnPublicRoute() {
         let route = window.location.pathname;
-        return $public_routes.indexOf(route) > -1;
+        for (let $route of $public_routes) {
+            let r = `^${$route}`;
+            let m = route.match(new RegExp(r));
+            if (m && m.length) return true;
+        }
+        return false;
+        // let r = '\^\'
+        // return $public_routes.indexOf(route) > -1;
     }
 
     hasAppCookie() {

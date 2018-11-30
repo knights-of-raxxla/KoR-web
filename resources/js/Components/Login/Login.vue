@@ -37,7 +37,7 @@
                             </button>
                         </div>
                         <small>
-                            <a href="/password-reset">I lost my password</a>
+                            <a href="/password/start-reset">I lost my password</a>
                         </small>
                     </div>
                 </div>

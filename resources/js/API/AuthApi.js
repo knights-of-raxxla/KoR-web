@@ -22,6 +22,29 @@ export default class AuthApi extends API {
         });
     }
 
+    startResetPassword(data) {
+        return new Promise((resolve, reject) => {
+            let reset_endpoint = window.location.origin + '/password/reset';
+            data.reset_endpoint = reset_endpoint;
+            let url = [
+                this.getApiUrl(),
+                'api/v1/user/start-password-reset'
+                ].join('');
+                return this.$.ajax({
+                    type: 'POST',
+                    url,
+                    data,
+                    headers: {
+                        'raxxla-auth': this.getCookie(),
+                    }
+                }).then(data => {
+                    return resolve(data);
+                }).fail(err => {
+                    return reject(err);
+                });
+        });
+    }
+
     login(email, password) {
         let url = [
             this.getApiUrl(),

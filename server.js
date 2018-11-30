@@ -18,10 +18,6 @@ app.get('/', function(req, res){
     });
 });
 
-app.get('/login', function (req, res) {
-    res.render('pages/login.twig');
-});
-
 app.get('/signup', function(req, res) {
     res.render('pages/signup.twig');
 });
@@ -32,6 +28,15 @@ app.get('/tos', function(req, res) {
 
 app.get('/signin', function(req, res) {
     res.render('pages/login.twig');
+});
+
+app.get('/password/start-reset', (req, res) => {
+    res.render('pages/start-password-reset.twig');
+});
+
+app.get('/password/reset/:token', (req, res) => {
+    res.render('pages/password-reset.twig');
+    // .with({token: req.params.token});
 });
 
 
