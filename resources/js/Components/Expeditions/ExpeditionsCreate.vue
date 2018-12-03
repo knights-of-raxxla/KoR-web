@@ -1,14 +1,22 @@
 <template>
 <div class="container">
     <div class="card" style="margin-top: 30px;">
+        <div class="card-header">
+            Create an expedition
+        </div>
         <div class="card-body">
-            <form @prevent.default>
+            <loader :loaded="!states.loading"></loader>
+            <form @prevent.default v-show="!states.loading">
                 <div class="form-group">
                     <h4>Basic info</h4>
                     <label>Expedition Name</label>
                     <input type="text"
+                    required=true
                     v-model="form.name"
                     class="form-control">
+                    <div class="text-danger" v-if="form.name && form.name.length && !name_valid">
+                        Please provide a valid expedition name of at least 3 characters.
+                    </div>
 
                     <label>Expedition description (HTML allowed)</label>
                     <textarea
@@ -17,30 +25,37 @@
                         v-model="form.description"
                         />
                     <label>Current Status</label>
-                    <select class="form-control">
+                    <select class="form-control"
+                        v-model="form.status"
+                    >
                         <option v-for="opt in options.status">
                             {{opt}}
                         </option>
                     </select>
-
+                    <div class="text-danger" v-if="form.status && form.status.length && !status_valid">
+                        Please select a status.
+                    </div>
                 </div>
 
                 <h4>Settings</h4>
                 <div class="form-check">
                     <label class="form-check-label">
-                        <input type="radio"
+                        <input type="checkbox"
                             class="form-check-input"
                             v-model="form.ignore_before_toggle"
                             value="true"
                         />
                    Ignore explored bodies before a given date
                     </label>
+                    <div class="text-danger" v-if="!ignore_valid">
+                        You need to select a date.
+                    </div>
                 </div>
-                <div class="form-group" v-if="form.ignore_before_toggle === 'true'">
+                <div class="form-group" v-if="form.ignore_before_toggle ===  true ">
                     <label>Ignore explored bodies before</label>
                     <datepicker
                         :config="config.datepicker"
-                        :value.sync="form.ignore_before"
+                        v-model="form.ignore_before"
                     ></datepicker>
 
                 </div>
@@ -68,6 +83,8 @@
                             I want to select all systems centered around a given system within a given radius.
                         </label>
                     </div>
+                </div>
+                <div clas="form-group">
 
                     <div class="form-group" v-if="form.systems.method === 'center'">
                         <label>Center system</label>
@@ -107,7 +124,7 @@
                         ></model-list-select>
                     </div>
                     <div class="form-group" v-if="form.systems.selected.length">
-                        <label>Selected systems:</label>
+                        <label>Selected systems ({{form.systems.selected.length}}):</label>
                         <table class="table table-sm">
                             <tbody>
                             <tr v-for="system in form.systems.selected">
@@ -125,6 +142,11 @@
                             </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="text-danger" v-if="!systems_valid">
+                        You need to select at least 1 system to create an expedition.
                     </div>
                 </div>
                 <div class="form-group tex-center">
@@ -150,10 +172,11 @@
                 form: {
                     name: null,
                     description: null,
-                    ignore_before: null,
+                    ignore_before: "",
                     ignore_before_toggle: null,
+                    status:'Active',
                     systems: {
-                        method: null,
+                        method: 'manual',
                         selected: [],
                         center: null
                     }
@@ -172,6 +195,9 @@
                 },
                 buffer: {
                     system: null
+                },
+                states: {
+                    loading: false
                 }
             }
         },
@@ -184,6 +210,14 @@
         },
         methods: {
             submit() {
+                this.states.loading = true;
+                expeApi.createExpedition(this.form)
+                    .then(out => {
+                        let loc = `/expeditions/${out.expedition_id}`;
+                        window.location.href = loc;
+                    }).catch(err => {
+                        throw new Error(err);
+                    });
             },
             searchSystem(text) {
                 if (!text || text.length < 2) return;
@@ -206,10 +240,42 @@
             }
         },
         computed: {
-            // TODO create validators
+            name_valid() {
+                return this.form.name &&
+                    this.form.name.length > 3;
+            },
+            status_valid() {
+                return this.form.status &&
+                this.form.status.length > 0;
+            },
+            ignore_valid() {
+                let is = this.form.ignore_before_toggle;
+                if (is === null) return true;
+                if (is === false) return true;
+                return this.form.ignore_before &&
+                this.form.ignore_before.length > 0;
+            },
+            systems_valid() {
+                let radio_val = this.form.systems.method;
+                if (radio_val === null) return false;
+                if (['manual', 'center'].indexOf(radio_val) === -1)
+                    return false;
+                let systems = this.form.systems.selected;
+                let systems_valid = systems && systems.length > 0;
+                if (radio_val === 'manual') {
+                    return systems_valid;
+                } else if (radio_val === 'center') {
+                    return this.form.systems.center && this.form.systems.center > 0
+                        && this.form.systems.radius > 10 && this.form.systems.radius < 200;
+
+                }
+            },
             form_valid() {
-                return false;
-                return true;
+                return this.name_valid === true &&
+                this.status_valid === true &&
+                this.ignore_valid === true &&
+                this.systems_valid === true &&
+                ['manual', 'center'].indexOf(this.form.systems.method) > -1;
             }
         }
     }

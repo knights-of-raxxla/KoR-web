@@ -45,7 +45,17 @@ app.get('/expeditions', (req, res) => {
 
 app.get('/expeditions/create', (req, res) => {
     res.render('pages/expeditions-create.twig');
-})
+});
+
+app.get('/user/logs/upload', (req, res) => {
+    res.render('pages/user-upload-logs.twig');
+});
+
+app.get('/expeditions/:id', (req, res) => {
+    let id = req.params.id;
+    res.render('pages/expedition-single.twig', {id});
+});
+
 
 
 app.listen(port, function () {

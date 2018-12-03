@@ -13,6 +13,7 @@ import {ModelListSelect, BasicSelect} from 'vue-search-select';
 import ExpeditionsCreate from '../Components/Expeditions/ExpeditionsCreate.vue';
 import Datepicker from 'vue-bootstrap-datetimepicker';
 import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
+import Loader from '../Components/Utils/Loader.vue';
 
 
 export default class VueContainer {
@@ -24,6 +25,7 @@ export default class VueContainer {
     Vue.use(BootstrapVue);
     Vue.component('datepicker', Datepicker);
     Vue.component('model-list-select', ModelListSelect);
+    Vue.component('loader', Loader);
     let app = new Vue({
       el: '.vue-app',
       components: {
