@@ -11,9 +11,9 @@
       </div>
       <div class="dropdown" v-if="is_logged_in">
           <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-            CMDR {{ profile.name }}
+            <i class="icon ion-md-person"></i>
           </button>
-          <div class="dropdown-menu">
+          <div class="dropdown-menu dropdown-menu-right">
               <a class="dropdown-item" href="/profile">Profile</a>
               <a class="dropdown-item" href="#" v-on:click="signout">Sign out</a>
           </div>

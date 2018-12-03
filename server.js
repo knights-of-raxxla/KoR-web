@@ -39,6 +39,14 @@ app.get('/password/reset/:token', (req, res) => {
     res.render('pages/password-reset.twig', {token});
 });
 
+app.get('/expeditions', (req, res) => {
+    res.render('pages/expeditions-landing.twig');
+});
+
+app.get('/expeditions/create', (req, res) => {
+    res.render('pages/expeditions-create.twig');
+})
+
 
 app.listen(port, function () {
     console.log('Raxxla Research Program WEB UI is listening on port ' + port);
