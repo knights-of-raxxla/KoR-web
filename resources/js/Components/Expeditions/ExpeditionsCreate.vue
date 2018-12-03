@@ -37,27 +37,29 @@
                     </div>
                 </div>
 
-                <h4>Settings</h4>
-                <div class="form-check">
-                    <label class="form-check-label">
-                        <input type="checkbox"
-                            class="form-check-input"
-                            v-model="form.ignore_before_toggle"
-                            value="true"
-                        />
-                   Ignore explored bodies before a given date
-                    </label>
-                    <div class="text-danger" v-if="!ignore_valid">
-                        You need to select a date.
+                <div class="form-group">
+                    <h4>Settings</h4>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input type="checkbox"
+                                class="form-check-input"
+                                v-model="form.ignore_before_toggle"
+                                value="true"
+                            />
+                       Ignore explored bodies before a given date
+                        </label>
+                        <div class="text-danger" v-if="!ignore_valid">
+                            You need to select a date.
+                        </div>
                     </div>
-                </div>
-                <div class="form-group" v-if="form.ignore_before_toggle ===  true ">
-                    <label>Ignore explored bodies before</label>
-                    <datepicker
-                        :config="config.datepicker"
-                        v-model="form.ignore_before"
-                    ></datepicker>
+                    <div class="form-group" v-if="form.ignore_before_toggle ===  true ">
+                        <label>Ignore explored bodies before</label>
+                        <datepicker
+                            :config="config.datepicker"
+                            v-model="form.ignore_before"
+                        ></datepicker>
 
+                    </div>
                 </div>
 
                 <div class="form-group">
