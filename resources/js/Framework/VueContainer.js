@@ -4,6 +4,7 @@ import Login from '../Components/Login/Login.vue';
 import Signup from '../Components/Signup/Signup.vue';
 import NavProfile from '../Components/NavProfile/NavProfile.vue';
 import StartPasswordReset from '../Components/Login/StartPasswordReset.vue';
+import PasswordReset from '../Components/Login/PasswordReset.vue';
 export default class VueContainer {
   constructor() {
     let app = this.setUp(Vue);
@@ -17,7 +18,8 @@ export default class VueContainer {
           Login,
           Signup,
           NavProfile,
-          StartPasswordReset
+          StartPasswordReset,
+          PasswordReset
       }
     });
     return app;

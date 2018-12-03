@@ -35,12 +35,12 @@ app.get('/password/start-reset', (req, res) => {
 });
 
 app.get('/password/reset/:token', (req, res) => {
-    res.render('pages/password-reset.twig');
-    // .with({token: req.params.token});
+    let token = req.params.token;
+    res.render('pages/password-reset.twig', {token});
 });
 
 
 app.listen(port, function () {
     console.log('Raxxla Research Program WEB UI is listening on port ' + port);
-})
+});
 
