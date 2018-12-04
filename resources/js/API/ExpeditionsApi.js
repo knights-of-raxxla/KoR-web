@@ -23,6 +23,32 @@ export default class ExpeditionsApi extends API {
         });
     }
 
+    fetchExpedition(id, offset = 0, partial = false) {
+        return new Promise((resolve, reject) => {
+            let url = [
+                this.getApiUrl(),
+                'api/v1/expeditions/',
+                id,
+                '?offset=',
+                offset,
+                '&partial=',
+                partial
+                ].join('');
+                return this.$.ajax({
+                    type: 'GET',
+                    url,
+                    headers: {
+                        'raxxla-auth': this.getCookie(),
+                    }
+                }).then(data => {
+                    return resolve(data);
+                }).fail(err => {
+                    return reject(err);
+                });
+        });
+
+    }
+
     /**
      * @param {String} like search string
      * @return {Promise<Object[], Error>}

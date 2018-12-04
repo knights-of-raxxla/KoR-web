@@ -2,11 +2,11 @@
 <div class="container">
     <div class="card text-center" style="margin-top: 30px;">
         <div class="card-body">
-                <button class="btn btn-primary">
-                    <a href="/expeditions/create">
-                    + Create expedition
-                    </a>
-                </button>
+                <a href="/expeditions/create">
+                    <button class="btn btn-primary">
+                        + Create expedition
+                    </button>
+                </a>
         </div>
     </div>
 </div>
