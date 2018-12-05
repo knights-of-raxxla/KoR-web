@@ -1,6 +1,51 @@
 {% extends '../templates/base.twig' %}
 {% block body %}
-        Welcome.
+        <div class="container" style="margin-top: 15px">
+            <div class="row">
+                <div class="card bg-danger" style="width: 100%">
+                    <div class="card-body" style="color: #fff">
+                        This is an alpha release. Be advised that all data will be wiped.
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 15px;">
+                <div class="card" style="width: 100%">
+                    <div class="card-body">
+                        <a href="https://discord.gg/Bf47uG9">
+                            <i class="icon ion-md-chatboxes"></i> Join us on discord
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 15px">
+                <div class="col">
+                    <div class="row">
+                        <div class="card" style="width: 100%; margin-right: 7.5px;">
+                            <div class="card-header">
+                                Current expeditions
+                            </div>
+                            <div class="card-body">
+                                <expeditions-list>
+                                </expeditions-list>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="card" style="width: 100%; margin-left: 7.5px;">
+                            <div class="card-header">
+                                Feed
+                            </div>
+                            <div class="card-body">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 {% endblock %}
 
 {% include '../parts/footer.twig' %}

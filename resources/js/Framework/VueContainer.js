@@ -12,6 +12,7 @@ import ExpeditionsAdmin from '../Components/Expeditions/ExpeditionsAdmin.vue';
 import {ModelListSelect, BasicSelect} from 'vue-search-select';
 import ExpeditionsCreate from '../Components/Expeditions/ExpeditionsCreate.vue';
 import ExpeditionSingle from '../Components/Expeditions/ExpeditionSingle.vue';
+import ExpeditionsList from '../Components/Expeditions/ExpeditionsList.vue';
 import Datepicker from 'vue-bootstrap-datetimepicker';
 import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
 import Loader from '../Components/Utils/Loader.vue';
@@ -38,7 +39,8 @@ export default class VueContainer {
           PasswordReset,
           ExpeditionsAdmin,
           ExpeditionsCreate,
-          ExpeditionSingle
+          ExpeditionSingle,
+          ExpeditionsList
       }
     });
     return app;

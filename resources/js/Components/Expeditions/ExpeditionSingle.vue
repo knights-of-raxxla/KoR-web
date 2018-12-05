@@ -63,19 +63,19 @@
                                 </div>
                                 <div class="card-body" v-show="system.id === states.body_shown">
                                     <loader :loaded="!states.table_loading"></loader>
-                                    <table class="table" v-show="!states.table_loading">
+                                    <table class="table" v-show="!states.table_loading" style="margin-top: -20px;">
                                         <thead>
                                             <tr>
-                                                <th>
+                                                <th style="border-top: none;">
                                                     Name
                                                 </th>
-                                                <th>
+                                                <th style="border-top: none;">
                                                     Last explored
                                                 </th>
-                                                <th>
+                                                <th style="border-top: none;">
                                                     Explored on platforms
                                                 </th>
-                                                <th>
+                                                <th style="border-top: none;">
                                                 </th>
                                             </tr>
                                         </thead>
@@ -114,7 +114,9 @@
                                                     </i>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-primary btn-sm">
+                                                    <button class="btn btn-primary btn-sm"
+                                                        v-on:click="showUpdateModal(system, body)"
+                                                        >
                                                         Update
                                                     </button>
                                                 </td>
@@ -132,6 +134,50 @@
                                 >
                                 </b-pagination>
                             </div>
+
+                            <b-modal
+                                ref="body_update_modal"
+                                :title="states.update_buffer.modal_name"
+                                hide-footer
+                                size="lg"
+                                >
+                                <div class="d-block text-center" v-if="!is_logged_in">
+                                    Only signed in users can update expeditions.
+                                </div>
+                                <div class="d-block text-center" v-if="is_logged_in">
+                                    <form @prevent.default>
+                                        <div class="form-group">
+                                            <label>Platform</label>
+                                            <select v-model="states.update_buffer.form.platform" class="form-control">
+                                                <option disabled value="">Choose</option>
+                                                <option  value="pc">PC</option>
+                                                <option  value="ps4">PS4</option>
+                                                <option  value="xbox_one">Xbox One</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input type="checkbox"
+                                                    class="form-check-input"
+                                                    v-model="states.update_buffer.form.visited"
+                                                    value="true"
+                                                    />
+                                                    I have visited (less than 100ls) or scanned this body.
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="button"
+                                                :disabled="!states.update_buffer.form.platform || !states.update_buffer.form.visited"
+                                                class="btn btn-success"
+                                                value="Submit"
+                                                v-on:click="submitVisited()"
+                                                />
+                                        </div>
+                                    </form>
+                                </div>
+                            </b-modal>
                         </div>
                     </div>
                 </div>
@@ -141,6 +187,8 @@
 </template>
 <script>
     import ExpeditionsApi from '../../API/ExpeditionsApi.js';
+    import SessionStore from './../../Framework/SessionStore.js';
+    const session = SessionStore.getInstance();
     import _ from 'lodash';
     import moment from 'moment';
     const expeApi = new ExpeditionsApi();
@@ -153,8 +201,16 @@
                     table_loading: false,
                     body_shown: null,
                     page_rows: 5,
-                    current_page: 1
-
+                    current_page: 1,
+                    update_buffer: {
+                        modal_name: null,
+                        system: null,
+                        body: null,
+                        form: {
+                            platform: session.getStore().platform,
+                            visited: false
+                        }
+                    }
                 },
                 expedition: {}
             };
@@ -181,6 +237,56 @@
             });
         },
         methods: {
+            submitVisited() {
+                let visitable = {
+                    visitable_type: 'body',
+                    visitable_id: this.states.update_buffer.body.id,
+                    user_id: session.getStore().id,
+                    report_method: 'manual',
+                    platform: this.states.update_buffer.form.platform
+                };
+                return expeApi.sendVisitableUpdate(visitable).then(res => {
+                    visitable.date = 'now';
+                    visitable.user = session.getStore();
+                    // if never explored, we increment the bodies explored count
+                    if (this.states.update_buffer.body.visitables.length === 0)
+                        this.expedition.stats.bodies_explored_count++;
+
+                    let system_index = _.findIndex(this.expedition.systems
+                        , {id: this.states.update_buffer.system.id});
+                    if (system_index < 0) throw new Error(`cant find system index`);
+                    let body_index = _.findIndex(this.expedition.systems[system_index].bodies
+                        , { id: this.states.update_buffer.body.id});
+                    if (body_index < 0) throw new Error(`cant find body index`);
+                    this.expedition.systems[system_index].bodies[body_index]
+                        .visitables.push(visitable);
+                    this.hideUpdateModal();
+                });
+            },
+            showUpdateModal(system, body) {
+            this.states.update_buffer = {
+                system,
+                body,
+                form: {
+                platform: session.getStore().platform,
+                    visited: false
+                }
+            };
+                this.states.update_buffer.modal_name = `Update ${system.name} > ${body.name}`;
+                this.$refs.body_update_modal.show();
+            },
+            hideUpdateModal() {
+                this.states.update_buffer =  {
+                    system: null,
+                    body: null,
+                    modal_name: null,
+                    form: {
+                    platform: session.getStore().platform,
+                        visited: false
+                    }
+                };
+                this.$refs.body_update_modal.hide();
+            },
             fetchSystemsPage(current_page, partial) {
                     this.states.table_loading = true;
                     let systems = $pages_buffer['page_' + current_page];
@@ -201,7 +307,7 @@
             },
             generatePlatformTooltip(visitable) {
                 let d = visitable.date.slice(0, 10);
-                let user = visitable.user.name;
+                let user = _.get(visitable, 'user.name');
                 return `${d} by CMDR ${user}`;
             },
             filterBodyVisitables(visitables) {
@@ -281,6 +387,9 @@
 
         },
         computed: {
+            is_logged_in() {
+                return session.getStore().id > 0;
+            },
             status_badge() {
                 let stat = this.expedition.status || "";
                 stat = stat.toLowerCase();
