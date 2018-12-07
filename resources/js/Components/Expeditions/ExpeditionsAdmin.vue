@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-    <div class="card text-center" style="margin-top: 30px;">
+    <div class="card text-center" style="margin-top: 30px;" v-show="is_logged_in">
         <div class="card-body">
                 <a href="/expeditions/create">
                     <button class="btn btn-primary">
@@ -13,6 +13,7 @@
 </template>
 <script>
     import SessionStore from '../../Framework/SessionStore.js';
+    const session = SessionStore.getInstance();
     export default {
         data() {
             return {
@@ -22,12 +23,15 @@
             }
         },
         mounted() {
-            let session  = SessionStore.getInstance();
-            let data = session.getStore();
         },
         methods: {
             goToExpeditionsCreate() {
                 window.location.hef = '/expeditions/create';
+            }
+        },
+        computed: {
+            is_logged_in() {
+                return session && session.getStore().id > 0;
             }
         }
     }

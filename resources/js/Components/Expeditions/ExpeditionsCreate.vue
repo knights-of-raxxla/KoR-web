@@ -5,8 +5,11 @@
             Create an expedition
         </div>
         <div class="card-body">
+            <div v-if="!is_logged_in">
+                You need to sign in to create expeditions.
+            </div>
             <loader :loaded="!states.loading"></loader>
-            <form @prevent.default v-show="!states.loading">
+            <form @prevent.default v-show="!states.loading && is_logged_in">
                 <div class="form-group">
                     <h4>Basic info</h4>
                     <label>Expedition Name</label>
@@ -167,7 +170,11 @@
 <script>
     import _ from 'lodash';
     import ExpeditionsApi from '../../API/ExpeditionsApi.js';
+    import SessionStore from '../../Framework/SessionStore.js';
+    const session = SessionStore.getInstance();
     const expeApi = new ExpeditionsApi();
+    import InputChange from '../../Components/Utils/InputChange.js';
+    let searchSystemChange = new InputChange();
     export default {
         data() {
             return {
@@ -189,8 +196,8 @@
                     }
                 },
                 options: {
-                    status: [
-                        'Active',
+                    s"tatus: [
+                        'Active'"",
                         'Preparing',
                     ],
                     systems: []
@@ -223,12 +230,15 @@
             },
             searchSystem(text) {
                 if (!text || text.length < 2) return;
-                expeApi.searchSystem(text)
-                .then(systems => {
-                    systems = _.filter(systems, system => {
-                        return !_.find(this.form.systems.selected, {id: system.id});
+                searchSystemChange.watch().then(() => {
+                    console.log('query backend');
+                    expeApi.searchSystem(text)
+                    .then(systems => {
+                        systems = _.filter(systems, system => {
+                            return !_.find(this.form.systems.selected, {id: system.id});
+                        });
+                        this.options.systems = systems;
                     });
-                    this.options.systems = systems;
                 });
             },
             onSystemSelected(id) {
@@ -242,6 +252,11 @@
             }
         },
         computed: {
+            is_logged_in() {
+                let store = session.getStore();
+                if (!store) return false;
+                return store.id > 0;
+            },
             name_valid() {
                 return this.form.name &&
                     this.form.name.length > 3;
