@@ -6,7 +6,7 @@
         </div>
         <div class="card-body">
             <div v-if="!is_logged_in">
-                You need to sign in to create expeditions.
+                You need to <a href="/signin"> sign in</a> to create expeditions.
             </div>
             <loader :loaded="!states.loading"></loader>
             <form @prevent.default v-show="!states.loading && is_logged_in">
@@ -196,8 +196,8 @@
                     }
                 },
                 options: {
-                    s"tatus: [
-                        'Active'"",
+                    status: [
+                        'Active',
                         'Preparing',
                     ],
                     systems: []
@@ -231,7 +231,6 @@
             searchSystem(text) {
                 if (!text || text.length < 2) return;
                 searchSystemChange.watch().then(() => {
-                    console.log('query backend');
                     expeApi.searchSystem(text)
                     .then(systems => {
                         systems = _.filter(systems, system => {

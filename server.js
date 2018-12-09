@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 4000;
+const port = 80;
 const Twig = require("twig");
 const path = require('path');
 
@@ -45,6 +45,10 @@ app.get('/expeditions', (req, res) => {
 
 app.get('/expeditions/create', (req, res) => {
     res.render('pages/expeditions-create.twig');
+});
+
+app.get('/expeditions/around', (req, res) => {
+    res.render('pages/expeditions-around.twig');
 });
 
 app.get('/user/logs/upload', (req, res) => {

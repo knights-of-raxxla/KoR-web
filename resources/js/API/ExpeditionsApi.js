@@ -53,14 +53,18 @@ export default class ExpeditionsApi extends API {
      * @param {String} like search string
      * @return {Promise<Object[], Error>}
      */
-    searchSystem(like) {
+    searchSystem(like, expedition) {
         return new Promise((resolve, reject) => {
             let url = [
                 this.getApiUrl(),
                 'api/v1/systems/search',
                 '?system=',
                 like
-                ].join('');
+                ];
+                if (expedition)
+                    url.push('&expedition=' + expedition);
+
+                url = url.join('');
                 return this.$.ajax({
                     type: 'GET',
                     url,
@@ -80,6 +84,48 @@ export default class ExpeditionsApi extends API {
             let url = [
                 this.getApiUrl(),
                 'api/v1/expeditions/current',
+                ].join('');
+                return this.$.ajax({
+                    type: 'GET',
+                    url,
+                    headers: {
+                        'raxxla-auth': this.getCookie(),
+                    }
+                }).then(data => {
+                    return resolve(data);
+                }).fail(err => {
+                    return reject(err);
+                });
+        });
+    }
+    findExpeditionsAroundMe(data) {
+        return new Promise((resolve, reject) => {
+            let url = [
+                this.getApiUrl(),
+                'api/v1/expeditions/around',
+                '?system_id=',
+                data.id
+                ].join('');
+                return this.$.ajax({
+                    type: 'GET',
+                    url,
+                    headers: {
+                        'raxxla-auth': this.getCookie(),
+                    }
+                }).then(data => {
+                    return resolve(data);
+                }).fail(err => {
+                    return reject(err);
+                });
+        });
+    }
+
+    getSystemInfo(id) {
+        return new Promise((resolve, reject) => {
+            let url = [
+                this.getApiUrl(),
+                'api/v1/system/',
+                id
                 ].join('');
                 return this.$.ajax({
                     type: 'GET',

@@ -34,7 +34,25 @@
 
                     <div class="row">
                         <div class="col">
-                            Systems :
+                            <div style="margin-bottom: 15px;">
+                                <div v-show="states.can_filter">
+                                    <model-list-select
+                                        :list="options.systems"
+                                        option-value="id"
+                                        option-text="name"
+                                        v-model="filter.system"
+                                        placeholder="search a system"
+                                        @searchchange="searchSystem"
+                                    ></model-list-select>
+                                </div>
+                                <div v-show="!states.can_filter">
+                                    <a href="#"
+                                        v-on:click="resetQsFilter"
+                                    > show all systems (reset filter)
+                                    </a>
+                                </div>
+                            </div>
+
                             <div class="card" v-for="system in expedition.systems" style="width: 100%">
                                 <div class="card-header">
                                     <strong>
@@ -125,7 +143,7 @@
                                     </table>
                                 </div>
                             </div>
-                            <div style="margin-top: 15px;">
+                            <div style="margin-top: 15px;" v-show="states.show_pagin">
                                 <b-pagination size="md"
                                 :total-rows="expedition.stats.systems_count"
                                 v-model="states.current_page"
@@ -142,7 +160,7 @@
                                 size="lg"
                                 >
                                 <div class="d-block text-center" v-if="!is_logged_in">
-                                    Only signed in users can update expeditions.
+                                    You need to <a href="/signin">sign in</a> to update expeditions.
                                 </div>
                                 <div class="d-block text-center" v-if="is_logged_in">
                                     <form @prevent.default>
@@ -189,6 +207,8 @@
     import ExpeditionsApi from '../../API/ExpeditionsApi.js';
     import SessionStore from './../../Framework/SessionStore.js';
     const session = SessionStore.getInstance();
+    import InputChange from '../../Components/Utils/InputChange.js';
+    let searchSystemChange = new InputChange();
     import _ from 'lodash';
     import moment from 'moment';
     const expeApi = new ExpeditionsApi();
@@ -198,9 +218,10 @@
             return {
                 states: {
                     ready: false,
+                    show_pagin: true,
                     table_loading: false,
                     body_shown: null,
-                    page_rows: 5,
+                    page_rows: 15,
                     current_page: 1,
                     update_buffer: {
                         modal_name: null,
@@ -211,6 +232,12 @@
                             visited: false
                         }
                     }
+                },
+                filter: {
+                    system: null
+                },
+                options: {
+                    systems: []
                 },
                 expedition: {}
             };
@@ -227,16 +254,66 @@
                     if (!this.states.ready) return;
                     this.fetchSystemsPage(current_page, true);
                 }
+            },
+            'filter.system': {
+                handler(id) {
+                    this.filterOutSystems(id);
+                }
             }
         },
         mounted() {
             return this.fetchSystemsPage(1, false)
             .then(() => {
                 this.states.ready = true;
+                let filter_qs = this.getQueryStringFilterValue();
+                if (filter_qs) {
+                    this.states.can_filter = false;
+                    return this.filterOutSystems(filter_qs)
+                        .then(sys => {
+                            if (!sys) throw new Error('uno');
+                            this.filter.system = sys.id;
+                            this.filter.system_name = sys.name;
+                        });
+                }
                 return 1;
             });
         },
         methods: {
+            resetQsFilter() {
+                console.log('plop');
+                this.states.can_filter = true;
+                this.filterOutSystems();
+            },
+            getQueryStringFilterValue() {
+                let s = window.location.search || "";
+                console.log(s, 's');
+                let val = _.get(s.split('?filter='), '[1]');
+                console.log(val, 'val');
+                return val;
+            },
+            filterOutSystems(id) {
+                if (!id) {
+                    this.states.show_pagin = true;
+                    let systems = $pages_buffer['page_' + this.states.current_page];
+                    this.expedition.systems = systems;
+                    return;
+                }
+                return expeApi.getSystemInfo(id)
+                .then(sys => {
+                    this.expedition.systems = [sys];
+                    this.states.show_pagin = false;
+                    return sys;
+                });
+            },
+            searchSystem(text) {
+                if (!text || text.length < 2) return;
+                searchSystemChange.watch().then(() => {
+                    expeApi.searchSystem(text, this.expedition.id)
+                    .then(systems => {
+                        this.options.systems = systems;
+                    });
+                });
+            },
             submitVisited() {
                 let visitable = {
                     visitable_type: 'body',
