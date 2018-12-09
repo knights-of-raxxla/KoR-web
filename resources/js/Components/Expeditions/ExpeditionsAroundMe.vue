@@ -50,7 +50,9 @@
                                     {{row.distance.toFixed()}} Ly
                                 </td>
                                 <td>
-                                    {{row.system_name}}
+                                    <a :href="'/expeditions/' + row.expedition_id + '?filter=' + row.system_id">
+                                        {{row.system_name}}
+                                    </a>
                                 </td>
                                 <td>
                                     <a :href="'/expeditions/' + row.expedition_id + '?filter=' + row.system_id">

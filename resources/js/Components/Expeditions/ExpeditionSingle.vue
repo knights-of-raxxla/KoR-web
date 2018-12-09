@@ -57,7 +57,7 @@
                                 <div class="card-header">
                                     <strong>
                                         <a href="#"
-                                            v-on:click="states.body_shown = system.id">
+                                            v-on:click="displayCollapse(system.id)">
                                             <span class="icon ion-md-arrow-dropright"
                                                 v-if="system.id !== states.body_shown"
                                                 >
@@ -73,7 +73,7 @@
                                     </strong>
 
                                     <a href="#"
-                                        v-on:click="states.body_shown = system.id">
+                                        v-on:click="displayCollapse(sytem.id)">
                                         <span class="badge badge-primary">
                                             {{getSystemProgress(system)}}/{{system.bodies.length}}
                                         </span>
@@ -279,16 +279,18 @@
             });
         },
         methods: {
+            displayCollapse(id) {
+                let current = this.states.body_shown;
+                if (current === id) this.states.body_shown = null;
+                else this.states.body_shown = id;
+            },
             resetQsFilter() {
-                console.log('plop');
                 this.states.can_filter = true;
                 this.filterOutSystems();
             },
             getQueryStringFilterValue() {
                 let s = window.location.search || "";
-                console.log(s, 's');
                 let val = _.get(s.split('?filter='), '[1]');
-                console.log(val, 'val');
                 return val;
             },
             filterOutSystems(id) {

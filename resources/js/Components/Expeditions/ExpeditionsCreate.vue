@@ -102,13 +102,13 @@
                             @searchchange="searchSystem"
                         ></model-list-select>
 
-                        <label>Include systems within Radius (sphere, max 200ly)</label>
+                        <label>Include systems within Radius (sphere, max 50ly)</label>
                         <div class="input-group mb-3">
                             <input type="number"
                                 class="form-control"
                                 v-model="form.systems.radius"
                                 min="10"
-                                max="200"
+                                max="51"
                             />
                             <div class="input-group-append">
                                 <span class="input-group-text" id="basic-addon2">ly</span>

@@ -60,6 +60,10 @@ app.get('/expeditions/:id', (req, res) => {
     res.render('pages/expedition-single.twig', {id});
 });
 
+app.get('/changelogs', (req, res) => {
+    res.render('pages/changelogs.twig');
+});
+
 
 
 app.listen(port, function () {

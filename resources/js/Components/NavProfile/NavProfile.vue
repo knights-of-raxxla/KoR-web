@@ -2,7 +2,7 @@
 <div>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item" v-if="is_logged_in">
+            <li class="nav-item">
                 <a class="nav-link" href="/user/logs/upload">
                     <i class="icon ion-md-cloud-upload"></i>
                         Upload your logs
