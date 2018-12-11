@@ -12,7 +12,7 @@
                     </a>
                     <b-progress :max="expe.stats.bodies_count">
                         <b-progress-bar :value="expe.stats.bodies_explored_count" variant="success">
-                        {{expe.stats.bodies_explored_count}} bodies explored / {{expe.stats.bodies_count}}
+                        {{expe.stats.bodies_explored_count}} bodies scanned / {{expe.stats.bodies_count}}
                         </span>
                         </b-progress-bar>
                     </b-progress>

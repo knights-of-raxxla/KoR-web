@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 4000;
+const port = 80;
 const Twig = require("twig");
 const path = require('path');
 
@@ -47,6 +47,10 @@ app.get('/expeditions/create', (req, res) => {
     res.render('pages/expeditions-create.twig');
 });
 
+app.get('/expeditions/around', (req, res) => {
+    res.render('pages/expeditions-around.twig');
+});
+
 app.get('/user/logs/upload', (req, res) => {
     res.render('pages/user-upload-logs.twig');
 });
@@ -54,6 +58,10 @@ app.get('/user/logs/upload', (req, res) => {
 app.get('/expeditions/:id', (req, res) => {
     let id = req.params.id;
     res.render('pages/expedition-single.twig', {id});
+});
+
+app.get('/changelogs', (req, res) => {
+    res.render('pages/changelogs.twig');
 });
 
 

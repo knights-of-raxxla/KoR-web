@@ -6,7 +6,7 @@
         </div>
         <div class="card-body">
             <div v-if="!is_logged_in">
-                You need to sign in to create expeditions.
+                You need to <a href="/signin"> sign in</a> to create expeditions.
             </div>
             <loader :loaded="!states.loading"></loader>
             <form @prevent.default v-show="!states.loading && is_logged_in">
@@ -49,14 +49,14 @@
                                 v-model="form.ignore_before_toggle"
                                 value="true"
                             />
-                       Ignore explored bodies before a given date
+                       Ignore scanned bodies before a given date
                         </label>
                         <div class="text-danger" v-if="!ignore_valid">
                             You need to select a date.
                         </div>
                     </div>
                     <div class="form-group" v-if="form.ignore_before_toggle ===  true ">
-                        <label>Ignore explored bodies before</label>
+                        <label>Ignore scanned bodies before</label>
                         <datepicker
                             :config="config.datepicker"
                             v-model="form.ignore_before"
@@ -102,13 +102,13 @@
                             @searchchange="searchSystem"
                         ></model-list-select>
 
-                        <label>Include systems within Radius (sphere, max 200ly)</label>
+                        <label>Include systems within Radius (sphere, max 50ly)</label>
                         <div class="input-group mb-3">
                             <input type="number"
                                 class="form-control"
                                 v-model="form.systems.radius"
                                 min="10"
-                                max="200"
+                                max="51"
                             />
                             <div class="input-group-append">
                                 <span class="input-group-text" id="basic-addon2">ly</span>
@@ -196,8 +196,8 @@
                     }
                 },
                 options: {
-                    s"tatus: [
-                        'Active'"",
+                    status: [
+                        'Active',
                         'Preparing',
                     ],
                     systems: []
@@ -231,7 +231,6 @@
             searchSystem(text) {
                 if (!text || text.length < 2) return;
                 searchSystemChange.watch().then(() => {
-                    console.log('query backend');
                     expeApi.searchSystem(text)
                     .then(systems => {
                         systems = _.filter(systems, system => {
