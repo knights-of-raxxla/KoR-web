@@ -16,4 +16,4 @@ services:
             local:
                 ipv4_address: 172.116.0.102
         ports:
-            - "4000:4000"
+            - "80:80"
