@@ -142,9 +142,9 @@
                                 size="lg"
                                 >
                                 <div class="d-block text-center" v-if="!is_logged_in">
-                                    Only signed in users can update expeditions.
+                                    You are not logged in, your submission will be anonymous. Please <a href="/signin">sign in</a> you wish to be authenticated.
                                 </div>
-                                <div class="d-block text-center" v-if="is_logged_in">
+                                <div class="d-block text-center">
                                     <form @prevent.default>
                                         <div class="form-group">
                                             <label>Platform</label>
@@ -154,6 +154,13 @@
                                                 <option  value="ps4">PS4</option>
                                                 <option  value="xbox_one">Xbox One</option>
                                             </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Comment</label>
+                                            <textarea
+                                                class="form-control"
+                                                v-model="states.update_buffer.form.comment"
+                                            ></textarea>
                                         </div>
                                         <div class="form-group">
                                             <div class="form-check">
@@ -208,7 +215,8 @@
                         body: null,
                         form: {
                             platform: session.getStore().platform,
-                            visited: false
+                            visited: false,
+                            comment: null
                         }
                     }
                 },
